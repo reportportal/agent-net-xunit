@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
 namespace ReportPortal.XUnitReporter
@@ -12,10 +7,10 @@ namespace ReportPortal.XUnitReporter
     {
         public string Description => "Reporting tests results to Report Portal";
 
-        public bool IsEnvironmentallyEnabled => true;
+        public bool IsEnvironmentallyEnabled => false;
 
         public string RunnerSwitch => "reportportal";
 
-        public IMessageSink CreateMessageHandler(IRunnerLogger logger) => new ReportPortalMessageHandler(logger);
+        public IMessageSink CreateMessageHandler(IRunnerLogger logger) => new ReportPortalReporterMessageHandler(logger);
     }
 }

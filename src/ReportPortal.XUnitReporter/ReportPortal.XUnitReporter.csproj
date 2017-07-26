@@ -31,8 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ReportPortal.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReportPortal.Client.1.2.9\lib\ReportPortal.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="ReportPortal.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReportPortal.Shared.1.4.2\lib\ReportPortal.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,19 +57,48 @@
       <HintPath>..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="xunit.assert, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.2.0\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.2.0\lib\netstandard1.1\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.execution.2.2.0\lib\net452\xunit.execution.desktop.dll</HintPath>
+    </Reference>
     <Reference Include="xunit.runner.utility.net452, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\packages\xunit.runner.utility.2.2.0\lib\net452\xunit.runner.utility.net452.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="EventArguments\RunFinishedEventArgs.cs" />
+    <Compile Include="EventArguments\RunStartedEventArgs.cs" />
+    <Compile Include="EventArguments\TestItemFinishedEventArgs.cs" />
+    <Compile Include="EventArguments\TestItemStartedEventArgs.cs" />
+    <Compile Include="EventTest\AfterEvent.cs" />
+    <Compile Include="EventTest\AssemblyEvent.cs" />
+    <Compile Include="EventTest\BeforeEvent.cs" />
+    <Compile Include="EventTest\CaseEvent.cs" />
+    <Compile Include="EventTest\ClassEvent.cs" />
+    <Compile Include="EventTest\CollectionEvent.cs" />
+    <Compile Include="EventTest\DiagnosticEvent.cs" />
+    <Compile Include="EventTest\DiscoveryEvent.cs" />
+    <Compile Include="EventTest\MethodEvent.cs" />
+    <Compile Include="EventTest\RunnerEvent.cs" />
+    <Compile Include="EventTest\TestEvent.cs" />
+    <Compile Include="EventTest\TestHelper.cs" />
+    <Compile Include="ReportPortalDisplayNameFormatter.cs" />
     <Compile Include="ReportPortalMessageHandler.cs" />
     <Compile Include="ReportPortalReporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
