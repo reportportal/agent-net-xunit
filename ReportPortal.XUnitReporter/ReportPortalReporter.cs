@@ -7,7 +7,7 @@ namespace ReportPortal.XUnitReporter
     {
         public string Description => "Reporting tests results to Report Portal";
 
-        public bool IsEnvironmentallyEnabled => false;
+        public bool IsEnvironmentallyEnabled => true;
 
         public string RunnerSwitch => "reportportal";
 
