@@ -133,7 +133,12 @@ namespace ReportPortal.XUnitReporter
                 testReporter.Finish(new FinishTestItemRequest()
                 {
                     EndTime = DateTime.UtcNow,
-                    Status = Status.Skipped
+                    Status = Status.Skipped,
+                    Issue = new Issue
+                    {
+                        Type = WellKnownIssueType.NotDefect,
+                        Comment = testEvent.Reason
+                    }
                 });
 
                 TestReporterDictionary.Remove(key);
