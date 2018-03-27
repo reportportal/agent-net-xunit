@@ -139,5 +139,25 @@ namespace ReportPortal.XUnitReporter
                 TestReporterDictionary.Remove(key);
             }
         }
+
+        protected virtual void Execution_TestOutputEvent(MessageHandlerArgs<ITestOutput> args)
+        {
+            lock (Logger.LockObject)
+            {
+                var testEvent = args.Message;
+                string key = testEvent.Test.TestCase.UniqueID;
+
+                Logger.LogMessage($"Output: {key} : {testEvent.Test.DisplayName}");
+
+                TestReporter testReporter = TestReporterDictionary[key];
+
+                testReporter.Log(new AddLogItemRequest
+                {
+                    Level = LogLevel.Info,
+                    Time = DateTime.UtcNow,
+                    Text = testEvent.Output
+                });
+            }
+        }
     }
 }

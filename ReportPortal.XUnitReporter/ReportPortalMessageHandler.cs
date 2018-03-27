@@ -19,7 +19,6 @@ namespace ReportPortal.XUnitReporter
     {
         private IRunnerLogger Logger { get; set; }
 
-        string path = $@"{Directory.GetCurrentDirectory()}\rp.porta.epam.txt";
         public static Config Config { get; private set; }
 
         protected Dictionary<string,TestReporter> TestReporterDictionary = new Dictionary<string, TestReporter>();
@@ -41,14 +40,12 @@ namespace ReportPortal.XUnitReporter
             Execution.TestCollectionStartingEvent += HandleTestCollectionStarting;
             Execution.TestCollectionFinishedEvent += HandleTestCollectionFinished;
 
-            //Execution.TestCaseStartingEvent += Execution_TestCaseStartingEvent;
-            //Execution.TestCaseFinishedEvent += Execution_TestCaseFinishedEvent;
-
             Execution.TestStartingEvent += HandleTestStarting;
             Execution.TestPassedEvent += HandlePassed;
             Execution.TestSkippedEvent += HandleSkipped;
             Execution.TestFailedEvent += HandleFailed;
 
+            Execution.TestOutputEvent += Execution_TestOutputEvent;
         }
     }
 }
