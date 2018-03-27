@@ -55,13 +55,21 @@ namespace ReportPortal.XUnitReporter
 
                 TestReporter testReporter = TestReporterDictionary[key];
 
-
                 testReporter.Log(new AddLogItemRequest
                 {
                     Level = LogLevel.Error,
                     Time = DateTime.UtcNow,
                     Text = $"{ExceptionUtility.CombineMessages(args.Message)}{Environment.NewLine}{ExceptionUtility.CombineStackTraces(args.Message)}"
                 });
+
+                if (!string.IsNullOrEmpty(args.Message.Output))
+                testReporter.Log(new AddLogItemRequest
+                {
+                    Level = LogLevel.Debug,
+                    Time = DateTime.UtcNow,
+                    Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
+                });
+
 
                 testReporter.Finish(new FinishTestItemRequest()
                 {
@@ -88,6 +96,14 @@ namespace ReportPortal.XUnitReporter
                 Logger.LogMessage($"Test passed: {key} : {testEvent.Test.DisplayName}");
 
                 TestReporter testReporter = TestReporterDictionary[key];
+
+                if (!string.IsNullOrEmpty(args.Message.Output))
+                    testReporter.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Debug,
+                        Time = DateTime.UtcNow,
+                        Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
+                    });
 
                 testReporter.Finish(new FinishTestItemRequest()
                 {
