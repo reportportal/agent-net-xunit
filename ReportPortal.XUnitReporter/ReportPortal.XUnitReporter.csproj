@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <Version>1.0.0-beta1</Version>
+    <PackageId>ReportPortal.XUnit</PackageId>
+    <Authors>reportportal</Authors>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/LICENSE</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReportPortal.Shared" Version="2.0.0-beta4" />
+    <PackageReference Include="xunit.runner.utility" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportPortal.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -23,8 +23,6 @@ bld/
 [Ll]og/
 
 tools
-!tools/packages.config
-!src/ReportPortal.XUnitReporter/tools
 
 # Visual Studio 2015 cache/options directory
 .vs/
