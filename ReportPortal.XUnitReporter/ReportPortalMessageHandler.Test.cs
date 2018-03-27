@@ -19,7 +19,7 @@ namespace ReportPortal.XUnitReporter
                 Logger.LogMessage($"Starting test: {key} : {testEvent.Test.DisplayName}");
 
                 var tags = new List<string>();
-                foreach(var trait in args.Message.Test.TestCase.Traits)
+                foreach (var trait in args.Message.Test.TestCase.Traits)
                 {
                     foreach (var value in trait.Value)
                     {
@@ -55,15 +55,13 @@ namespace ReportPortal.XUnitReporter
 
                 TestReporter testReporter = TestReporterDictionary[key];
 
-                foreach(var message in args.Message.Messages)
+
+                testReporter.Log(new AddLogItemRequest
                 {
-                    testReporter.Log(new AddLogItemRequest
-                    {
-                        Level = LogLevel.Error,
-                        Time = DateTime.UtcNow,
-                        Text = message
-                    });
-                }
+                    Level = LogLevel.Error,
+                    Time = DateTime.UtcNow,
+                    Text = $"{ExceptionUtility.CombineMessages(args.Message)}{Environment.NewLine}{ExceptionUtility.CombineStackTraces(args.Message)}"
+                });
 
                 testReporter.Finish(new FinishTestItemRequest()
                 {
