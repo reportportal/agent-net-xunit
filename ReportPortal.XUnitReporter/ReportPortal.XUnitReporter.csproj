@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <Version>1.0.0-beta1</Version>
+    <Version>1.0.0</Version>
     <PackageId>ReportPortal.XUnit</PackageId>
     <Authors>reportportal</Authors>
     <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/LICENSE</PackageLicenseUrl>
