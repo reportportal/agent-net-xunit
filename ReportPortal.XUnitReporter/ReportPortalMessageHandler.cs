@@ -27,7 +27,7 @@ namespace ReportPortal.XUnitReporter
         {
             Logger = logger;
 
-            var configPath = Path.GetDirectoryName(new Uri(typeof(Config).Assembly.CodeBase).LocalPath) + "/ReportPortal.config";
+            var configPath = Path.GetDirectoryName(new Uri(typeof(Config).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
             Config = Client.Converters.ModelSerializer.Deserialize<Config>(File.ReadAllText(configPath));
 
             Logger.LogMessage($".Bridge: {Bridge.Context.GetHashCode()}");

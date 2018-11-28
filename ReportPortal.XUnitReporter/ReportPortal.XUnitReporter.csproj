@@ -1,22 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
-    <Version>1.0.1</Version>
+    <TargetFrameworks>net452;netstandard20;</TargetFrameworks>
     <PackageId>ReportPortal.XUnit</PackageId>
-    <Authors>reportportal</Authors>
+    <Version>1.0.0</Version>
+    <Description>XUnit reporter to ReportPortal</Description>
+    <Authors>Nikolay Borisenko, Report Portal Community</Authors>
+    <PackageTags>xunit reporter reportportal testing</PackageTags>
     <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/Logo.png</PackageIconUrl>
+    <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
+
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/reportportal/agent-net-xunit</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="2.0.3" />
-    <PackageReference Include="xunit.runner.utility" Version="2.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="ReportPortal.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="ReportPortal.Shared" Version="2.0.6" />
+    <PackageReference Include="xunit.runner.utility" Version="2.4.0" />
   </ItemGroup>
 
 </Project>
