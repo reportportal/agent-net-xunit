@@ -16,8 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="2.0.6" />
-    <PackageReference Include="xunit.runner.utility" Version="2.4.0" />
+    <PackageReference Include="ReportPortal.Shared" Version="2.1.2" />
+    <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportPortal.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

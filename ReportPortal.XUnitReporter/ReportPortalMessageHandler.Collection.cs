@@ -1,6 +1,7 @@
 ﻿using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
+using ReportPortal.Shared.Reporter;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,19 +18,25 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testCollection = args.Message;
-                string key = testCollection.TestCollection.UniqueID.ToString();
-                Logger.LogMessage($"Starting test collection: {key} : {testCollection.TestCollection.DisplayName}");
+                try
+                {
+                    var testCollection = args.Message;
+                    string key = testCollection.TestCollection.UniqueID.ToString();
 
-                TestReporter testReporter = Bridge.Context.LaunchReporter.StartNewTestNode(
-                    new StartTestItemRequest()
-                    {
-                        Name = testCollection.TestCollection.DisplayName,
-                        StartTime = DateTime.UtcNow,
-                        Type = TestItemType.Suite
-                    });
+                    ITestReporter testReporter = Bridge.Context.LaunchReporter.StartChildTestReporter(
+                        new StartTestItemRequest()
+                        {
+                            Name = testCollection.TestCollection.DisplayName,
+                            StartTime = DateTime.UtcNow,
+                            Type = TestItemType.Suite
+                        });
 
-                TestReporterDictionary[key] = testReporter;
+                    TestReporterDictionary[key] = testReporter;
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -41,15 +48,21 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testCollection = args.Message;
-                string key = testCollection.TestCollection.UniqueID.ToString();
-                Logger.LogMessage($"Finishing test collection: {key} : {testCollection.TestCollection.DisplayName}");
-
-                TestReporterDictionary[key].Finish(new FinishTestItemRequest()
+                try
                 {
-                    EndTime = DateTime.UtcNow,
-                    Status = testCollection.TestsFailed > 0 ? Status.Failed : Status.Passed
-                });
+                    var testCollection = args.Message;
+                    string key = testCollection.TestCollection.UniqueID.ToString();
+
+                    TestReporterDictionary[key].Finish(new FinishTestItemRequest()
+                    {
+                        EndTime = DateTime.UtcNow,
+                        Status = testCollection.TestsFailed > 0 ? Status.Failed : Status.Passed
+                    });
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
     }

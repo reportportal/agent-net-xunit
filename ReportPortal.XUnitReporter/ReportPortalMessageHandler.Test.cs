@@ -1,6 +1,6 @@
 ﻿using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
+using ReportPortal.Shared.Reporter;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -14,29 +14,35 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testEvent = args.Message;
-                string key = testEvent.Test.TestCase.UniqueID.ToString();
-                Logger.LogMessage($"Starting test: {key} : {testEvent.Test.DisplayName}");
-
-                var tags = new List<string>();
-                foreach (var trait in args.Message.Test.TestCase.Traits)
+                try
                 {
-                    foreach (var value in trait.Value)
+                    var testEvent = args.Message;
+                    string key = testEvent.Test.TestCase.UniqueID.ToString();
+
+                    var tags = new List<string>();
+                    foreach (var trait in args.Message.Test.TestCase.Traits)
                     {
-                        tags.Add($"{trait.Key}: {value}");
+                        foreach (var value in trait.Value)
+                        {
+                            tags.Add($"{trait.Key}: {value}");
+                        }
                     }
+
+                    ITestReporter testReporter = TestReporterDictionary[testEvent.TestCollection.UniqueID.ToString()].StartChildTestReporter(
+                        new StartTestItemRequest()
+                        {
+                            Name = testEvent.Test.DisplayName,
+                            StartTime = DateTime.UtcNow,
+                            Type = TestItemType.Step,
+                            Tags = tags
+                        });
+
+                    TestReporterDictionary[key] = testReporter;
                 }
-
-                TestReporter testReporter = TestReporterDictionary[testEvent.TestCollection.UniqueID.ToString()].StartNewTestNode(
-                    new StartTestItemRequest()
-                    {
-                        Name = testEvent.Test.DisplayName,
-                        StartTime = DateTime.UtcNow,
-                        Type = TestItemType.Step,
-                        Tags = tags
-                    });
-
-                TestReporterDictionary[key] = testReporter;
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -48,36 +54,41 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testEvent = args.Message;
-                string key = testEvent.Test.TestCase.UniqueID;
-
-                Logger.LogMessage($"Test failed: {key} : {testEvent.Test.DisplayName}");
-
-                TestReporter testReporter = TestReporterDictionary[key];
-
-                testReporter.Log(new AddLogItemRequest
+                try
                 {
-                    Level = LogLevel.Error,
-                    Time = DateTime.UtcNow,
-                    Text = $"{ExceptionUtility.CombineMessages(args.Message)}{Environment.NewLine}{ExceptionUtility.CombineStackTraces(args.Message)}"
-                });
+                    var testEvent = args.Message;
+                    string key = testEvent.Test.TestCase.UniqueID;
 
-                if (!string.IsNullOrEmpty(args.Message.Output))
-                testReporter.Log(new AddLogItemRequest
+                    ITestReporter testReporter = TestReporterDictionary[key];
+
+                    testReporter.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Error,
+                        Time = DateTime.UtcNow,
+                        Text = $"{ExceptionUtility.CombineMessages(args.Message)}{Environment.NewLine}{ExceptionUtility.CombineStackTraces(args.Message)}"
+                    });
+
+                    if (!string.IsNullOrEmpty(args.Message.Output))
+                        testReporter.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Debug,
+                            Time = DateTime.UtcNow,
+                            Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
+                        });
+
+
+                    testReporter.Finish(new FinishTestItemRequest()
+                    {
+                        EndTime = DateTime.UtcNow,
+                        Status = Status.Failed
+                    });
+
+                    TestReporterDictionary.Remove(key);
+                }
+                catch (Exception exp)
                 {
-                    Level = LogLevel.Debug,
-                    Time = DateTime.UtcNow,
-                    Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
-                });
-
-
-                testReporter.Finish(new FinishTestItemRequest()
-                {
-                    EndTime = DateTime.UtcNow,
-                    Status = Status.Failed
-                });
-
-                TestReporterDictionary.Remove(key);
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -90,28 +101,33 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testEvent = args.Message;
-                string key = testEvent.Test.TestCase.UniqueID;
+                try
+                {
+                    var testEvent = args.Message;
+                    string key = testEvent.Test.TestCase.UniqueID;
 
-                Logger.LogMessage($"Test passed: {key} : {testEvent.Test.DisplayName}");
+                    ITestReporter testReporter = TestReporterDictionary[key];
 
-                TestReporter testReporter = TestReporterDictionary[key];
+                    if (!string.IsNullOrEmpty(args.Message.Output))
+                        testReporter.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Debug,
+                            Time = DateTime.UtcNow,
+                            Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
+                        });
 
-                if (!string.IsNullOrEmpty(args.Message.Output))
-                    testReporter.Log(new AddLogItemRequest
+                    testReporter.Finish(new FinishTestItemRequest()
                     {
-                        Level = LogLevel.Debug,
-                        Time = DateTime.UtcNow,
-                        Text = $"Test output:{Environment.NewLine}{args.Message.Output}"
+                        EndTime = DateTime.UtcNow,
+                        Status = Status.Passed
                     });
 
-                testReporter.Finish(new FinishTestItemRequest()
+                    TestReporterDictionary.Remove(key);
+                }
+                catch (Exception exp)
                 {
-                    EndTime = DateTime.UtcNow,
-                    Status = Status.Passed
-                });
-
-                TestReporterDictionary.Remove(key);
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -123,25 +139,30 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testEvent = args.Message;
-                string key = testEvent.Test.TestCase.UniqueID;
-
-                Logger.LogMessage($"Test skipped: {key} : {testEvent.Test.DisplayName}");
-
-                TestReporter testReporter = TestReporterDictionary[key];
-
-                testReporter.Finish(new FinishTestItemRequest()
+                try
                 {
-                    EndTime = DateTime.UtcNow,
-                    Status = Status.Skipped,
-                    Issue = new Issue
-                    {
-                        Type = WellKnownIssueType.NotDefect,
-                        Comment = testEvent.Reason
-                    }
-                });
+                    var testEvent = args.Message;
+                    string key = testEvent.Test.TestCase.UniqueID;
 
-                TestReporterDictionary.Remove(key);
+                    ITestReporter testReporter = TestReporterDictionary[key];
+
+                    testReporter.Finish(new FinishTestItemRequest()
+                    {
+                        EndTime = DateTime.UtcNow,
+                        Status = Status.Skipped,
+                        Issue = new Issue
+                        {
+                            Type = WellKnownIssueType.NotDefect,
+                            Comment = testEvent.Reason
+                        }
+                    });
+
+                    TestReporterDictionary.Remove(key);
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -149,19 +170,24 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                var testEvent = args.Message;
-                string key = testEvent.Test.TestCase.UniqueID;
-
-                Logger.LogMessage($"Output: {key} : {testEvent.Test.DisplayName}");
-
-                TestReporter testReporter = TestReporterDictionary[key];
-
-                testReporter.Log(new AddLogItemRequest
+                try
                 {
-                    Level = LogLevel.Info,
-                    Time = DateTime.UtcNow,
-                    Text = testEvent.Output
-                });
+                    var testEvent = args.Message;
+                    string key = testEvent.Test.TestCase.UniqueID;
+
+                    ITestReporter testReporter = TestReporterDictionary[key];
+
+                    testReporter.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Info,
+                        Time = DateTime.UtcNow,
+                        Text = testEvent.Output
+                    });
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
     }
