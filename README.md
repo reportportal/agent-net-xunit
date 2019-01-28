@@ -5,7 +5,7 @@ Download zip archive from the `Releases` tab and extract it into the folder with
 - xunit.console.exe
 - ReportPortal.XUnitReporter.dll
 
-> Note: Supports xUnit v2.4
+> Note: Supports only xUnit v2.4. Awaiting [issue](https://github.com/xunit/xunit/issues/1874) with ability to use custom reporters.
 
 # Configuration
 Configure connection with Report Portal server in `ReportPortal.config.json` file.
