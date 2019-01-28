@@ -5,8 +5,10 @@ Download zip archive from the `Releases` tab and extract it into the folder with
 - xunit.console.exe
 - ReportPortal.XUnitReporter.dll
 
+> Note: Supports xUnit v2.4
+
 # Configuration
-Configure connection with Report Portal server in `ReportPortal.config` file.
+Configure connection with Report Portal server in `ReportPortal.config.json` file.
 
 # Usage
 Just execute your tests as you do it usually. Test results are automatically will be sent during execution.
