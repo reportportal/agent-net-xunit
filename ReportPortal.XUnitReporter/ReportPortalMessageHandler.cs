@@ -1,17 +1,13 @@
 ﻿using ReportPortal.Client;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Threading;
 using Xunit;
-using Xunit.Abstractions;
-using System.Linq;
-using ReportPortal.XUnitReporter.Configuration;
-using System.Collections.Concurrent;
+
+using ReportPortal.Shared.Reporter;
+using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Configuration.Providers;
 
 namespace ReportPortal.XUnitReporter
 {
@@ -19,20 +15,21 @@ namespace ReportPortal.XUnitReporter
     {
         private IRunnerLogger Logger { get; set; }
 
-        public static Config Config { get; private set; }
+        private IConfiguration _config;
 
-        protected Dictionary<string,TestReporter> TestReporterDictionary = new Dictionary<string, TestReporter>();
+        protected Dictionary<string, ITestReporter> TestReporterDictionary = new Dictionary<string, ITestReporter>();
 
         public ReportPortalReporterMessageHandler(IRunnerLogger logger)
         {
             Logger = logger;
 
-            var configPath = Path.GetDirectoryName(new Uri(typeof(Config).Assembly.CodeBase).LocalPath) + "/ReportPortal.config";
-            Config = Client.Converters.ModelSerializer.Deserialize<Config>(File.ReadAllText(configPath));
+            var jsonPath = Path.GetDirectoryName(new Uri(typeof(ReportPortalReporter).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
 
-            Logger.LogMessage($".Bridge: {Bridge.Context.GetHashCode()}");
+            Logger.LogMessage($"ReportPortal json config: {jsonPath}");
 
-            Bridge.Service = new Service(Config.Server.Url, Config.Server.Project, Config.Server.Authentication.Uuid);
+            _config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
+
+            Bridge.Service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
 
             Execution.TestAssemblyStartingEvent += TestAssemblyExecutionStarting;
             Execution.TestAssemblyFinishedEvent += TestAssemblyExecutionFinished;

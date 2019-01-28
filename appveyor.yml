@@ -1,0 +1,21 @@
+﻿image: Visual Studio 2017
+
+install:
+  - ps: gitversion /l console /output buildserver
+
+configuration:
+  - Release
+
+dotnet_csproj:
+  patch: true
+  version: '$(GitVersion_SemVersion)'
+
+build_script:
+  - cmd: >-
+    dotnet build
+    7z a reportportal-%GitVersion_SemVer%.zip ./ReportPortal.XUnitReporter/bin/%configuration%/net452/ReportPortal*
+
+test: off
+
+artifacts:
+  - path: '**\*.zip'

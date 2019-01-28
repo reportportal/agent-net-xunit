@@ -1,7 +1,10 @@
 ﻿using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
+using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Reporter;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xunit;
@@ -19,19 +22,26 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                LaunchMode launchMode = Config.Launch.IsDebugMode ? LaunchMode.Debug : LaunchMode.Default;
-
-                StartLaunchRequest startLaunchRequest = new StartLaunchRequest
+                try
                 {
-                    Name = Config.Launch.Name,
-                    StartTime = DateTime.UtcNow,
-                    Mode = launchMode,
-                    Tags = Config.Launch.Tags,
-                    Description = $"{Config.Launch.Description}{Environment.NewLine}Environment: {args.Message.TestEnvironment}, Platform: {args.Message.TestFrameworkDisplayName}"
-                };
+                    LaunchMode launchMode = _config.GetValue(ConfigurationPath.LaunchDebugMode, false) ? LaunchMode.Debug : LaunchMode.Default;
 
-                Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
-                Bridge.Context.LaunchReporter.Start(startLaunchRequest);
+                    StartLaunchRequest startLaunchRequest = new StartLaunchRequest
+                    {
+                        Name = _config.GetValue(ConfigurationPath.LaunchName, "xUnit Demo Launch"),
+                        StartTime = DateTime.UtcNow,
+                        Mode = launchMode,
+                        Tags = _config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList(),
+                        Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
+                    };
+
+                    Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
+                    Bridge.Context.LaunchReporter.Start(startLaunchRequest);
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
 
@@ -39,14 +49,22 @@ namespace ReportPortal.XUnitReporter
         {
             lock (Logger.LockObject)
             {
-                Logger.LogMessage(".AssemblyFinishedEvent");
-                Bridge.Context.LaunchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
+                try
+                {
+                    Bridge.Context.LaunchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
 
-                var stopWatch = Stopwatch.StartNew();
-                Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
+                    Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
 
-                Bridge.Context.LaunchReporter.FinishTask.Wait();
-                Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
+                    var stopWatch = Stopwatch.StartNew();
+
+                    Bridge.Context.LaunchReporter.FinishTask.Wait();
+
+                    Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
+                }
+                catch (Exception exp)
+                {
+                    Logger.LogError(exp.ToString());
+                }
             }
         }
     }
