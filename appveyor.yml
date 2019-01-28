@@ -13,6 +13,7 @@ dotnet_csproj:
 build_script:
 - cmd: >-
     dotnet build
+    
     7z a reportportal-%GitVersion_SemVer%.zip ./ReportPortal.XUnitReporter/bin/%configuration%/net452/ReportPortal*
 
 test: off
