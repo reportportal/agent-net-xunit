@@ -8,7 +8,7 @@ configuration:
 
 dotnet_csproj:
   patch: true
-  version: '$(GitVersion_SemVersion)'
+  version: '$(GitVersion_SemVer)'
 
 build_script:
 - cmd: >-
