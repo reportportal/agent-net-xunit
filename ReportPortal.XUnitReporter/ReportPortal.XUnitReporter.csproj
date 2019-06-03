@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="2.1.2" />
+    <PackageReference Include="ReportPortal.Shared" Version="2.2.0" />
     <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
   </ItemGroup>
 
