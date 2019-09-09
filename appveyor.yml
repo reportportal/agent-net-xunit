@@ -14,8 +14,8 @@ build_script:
 - cmd: >-
     dotnet build
     dotnet pack
-    7z a reportportal-%GitVersion_SemVer%-net452.zip ./ReportPortal.XUnitReporter/bin/%configuration%/net452/ReportPortal*
-    7z a reportportal-%GitVersion_SemVer%-net452.zip ./ReportPortal.XUnitReporter/bin/%configuration%/netcoreapp2.0/ReportPortal*
+    7z a reportportal-%GitVersion_SemVer%-net452.zip ./src/ReportPortal.XUnitReporter/bin/%configuration%/net452/ReportPortal*
+    7z a reportportal-%GitVersion_SemVer%-net452.zip ./src/ReportPortal.XUnitReporter/bin/%configuration%/netcoreapp2.0/ReportPortal*
 test: off
 
 artifacts:
