@@ -2,8 +2,8 @@
 
 There are 2 ways to use ReportPortal with xUnit framework, it's depent on runner.
 
-- [Visual Studio Runner](#Visual%20Studio%20Runner)
-- [xunit.console.exe](#xunit.console.exe)
+- [Visual Studio Runner](#visual-studio-runner)
+- [xunit.console.exe](#xunitconsoleexe)
 
 # Visual Studio Runner
 
