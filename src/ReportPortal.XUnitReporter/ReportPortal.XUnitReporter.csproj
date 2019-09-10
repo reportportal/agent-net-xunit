@@ -7,7 +7,7 @@
     <Description>XUnit results reporter to http://reportportal.io</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
     <PackageTags>xunit reporter reportportal testing</PackageTags>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-xunit/master/Logo.png</PackageIconUrl>
     <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
 
