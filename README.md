@@ -69,3 +69,6 @@ set reportportal_launch_name="My new launch name"
 ```
 
 `reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Tags` with `tag1;tag2` value (`;` used as separator for list of values).
+
+# Known issues
+Integration of log frameworks doesn't work, needs additional adjustment in test project. This issue is under investigtaion to make log integration more convinient.
