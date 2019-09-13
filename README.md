@@ -92,7 +92,7 @@ class MyTests
   public void MyTest1()
   {
     _output.WriteLine("my message"); // this message goes to test output, will see it at the end of test
-    ReportPortal.Shared.Log.Info("my message"); // this message goes intermediately to Report Portal
+    ReportPortal.Shared.Log.Info("my message"); // this message goes immediately to Report Portal
 
     // or use log framework to produce messages
   }
