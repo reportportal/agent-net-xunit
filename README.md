@@ -70,5 +70,51 @@ set reportportal_launch_name="My new launch name"
 
 `reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Tags` with `tag1;tag2` value (`;` used as separator for list of values).
 
-# Known issues
-Integration of log frameworks doesn't work, needs additional adjustment in test project. This issue is under investigtaion to make log integration more convinient.
+# Integrate logger framework
+- [NLog](https://github.com/reportportal/logger-net-nlog)
+- [log4net](https://github.com/reportportal/logger-net-log4net)
+- [Serilog](https://github.com/reportportal/logger-net-serilog)
+- [System.Diagnostics.TraceListener](https://github.com/reportportal/logger-net-tracelistener)
+
+By default xunit doesn't have capturing test output mechanism. To make log frameworks to put messages to ReportPortal, you have to declare `ITestOutputHelper` object in fixture class constructor, and attach ReportPortal to it.
+
+```csharp
+class MyTests
+{
+  private ITestOutputHelper _output;
+
+  void MyTests(ITestOutputHelper output)
+  {
+    _output = output.WithReportPortal();
+  }
+
+  [Fact]
+  public void MyTest1()
+  {
+    _output.WriteLine("my message"); // this message goes to test output, will see it at the end of test
+    ReportPortal.Shared.Log.Info("my message"); // this message goes intermediately to Report Portal
+
+    // or use log framework to produce messages
+  }
+}
+```
+
+> Note: sometimes log messages might be lost if test actively is switching thread context. Currently it's impossible to track test context, please help us to do it.
+
+```csharp
+var tasks = new List<Task>();
+for (int i=0; i < 3; i++)
+{
+  tasks.Add(Task.Run(() => SomeMethod()));
+}
+Task.WaitAll(tasks.ToArray());
+```
+
+In this example we create 3 threads and execute `SomeMethod()` in parallel. The issue is if `SomeMethod` produces log messages - we will loose them. To help us not to lose context just attach ReportPortal one more time. New code looks like:
+
+```csharp
+tasks.Add(Task.Run(() => { _output.WithReportPortal(); SomeMethod(); } ));
+```
+
+# Useful extensions
+- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback)

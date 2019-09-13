@@ -177,12 +177,39 @@ namespace ReportPortal.XUnitReporter
 
                     ITestReporter testReporter = TestReporterDictionary[key];
 
-                    testReporter.Log(new AddLogItemRequest
+                    bool isInternalSharedMessage = false;
+
+                    try
                     {
-                        Level = LogLevel.Info,
-                        Time = DateTime.UtcNow,
-                        Text = testEvent.Output
-                    });
+                        var sharedLogMessage = Client.Converters.ModelSerializer.Deserialize<SharedLogMessage>(testEvent.Output);
+
+                        isInternalSharedMessage = true;
+
+                        var logItemRequest = new AddLogItemRequest
+                        {
+                            Time = sharedLogMessage.Time,
+                            Level = sharedLogMessage.Level,
+                            Text = sharedLogMessage.Text
+                        };
+
+                        if (sharedLogMessage.Attach != null)
+                        {
+                            logItemRequest.Attach = new Client.Models.Attach(sharedLogMessage.Attach.Name, sharedLogMessage.Attach.MimeType, sharedLogMessage.Attach.Data);
+                        }
+
+                        testReporter.Log(logItemRequest);
+                    }
+                    catch (Exception) { }
+
+                    if (!isInternalSharedMessage)
+                    {
+                        testReporter.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Info,
+                            Time = DateTime.UtcNow,
+                            Text = testEvent.Output
+                        });
+                    }
                 }
                 catch (Exception exp)
                 {
