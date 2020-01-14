@@ -35,7 +35,7 @@ namespace ReportPortal.XUnitReporter
                         Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
                     };
 
-                    Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
+                    Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service, _config, null);
                     Bridge.Context.LaunchReporter.Start(startLaunchRequest);
                 }
                 catch (Exception exp)
