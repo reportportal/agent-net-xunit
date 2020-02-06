@@ -1,5 +1,5 @@
-﻿using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
+﻿using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Reporter;
@@ -26,7 +26,7 @@ namespace ReportPortal.XUnitReporter
                 {
                     LaunchMode launchMode = _config.GetValue(ConfigurationPath.LaunchDebugMode, false) ? LaunchMode.Debug : LaunchMode.Default;
 
-                    StartLaunchRequest startLaunchRequest = new StartLaunchRequest
+                    var startLaunchRequest = new StartLaunchRequest
                     {
                         Name = _config.GetValue(ConfigurationPath.LaunchName, "xUnit Demo Launch"),
                         StartTime = DateTime.UtcNow,

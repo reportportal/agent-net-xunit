@@ -1,5 +1,5 @@
-﻿using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
+﻿using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared.Reporter;
 using System;
 using System.Collections.Generic;
@@ -61,7 +61,7 @@ namespace ReportPortal.XUnitReporter
 
                     ITestReporter testReporter = TestReporterDictionary[key];
 
-                    testReporter.Log(new AddLogItemRequest
+                    testReporter.Log(new CreateLogItemRequest
                     {
                         Level = LogLevel.Error,
                         Time = DateTime.UtcNow,
@@ -69,7 +69,7 @@ namespace ReportPortal.XUnitReporter
                     });
 
                     if (!string.IsNullOrEmpty(args.Message.Output))
-                        testReporter.Log(new AddLogItemRequest
+                        testReporter.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Debug,
                             Time = DateTime.UtcNow,
@@ -109,7 +109,7 @@ namespace ReportPortal.XUnitReporter
                     ITestReporter testReporter = TestReporterDictionary[key];
 
                     if (!string.IsNullOrEmpty(args.Message.Output))
-                        testReporter.Log(new AddLogItemRequest
+                        testReporter.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Debug,
                             Time = DateTime.UtcNow,
@@ -185,7 +185,7 @@ namespace ReportPortal.XUnitReporter
 
                         isInternalSharedMessage = true;
 
-                        var logItemRequest = new AddLogItemRequest
+                        var logItemRequest = new CreateLogItemRequest
                         {
                             Time = sharedLogMessage.Time,
                             Level = sharedLogMessage.Level,
@@ -194,7 +194,7 @@ namespace ReportPortal.XUnitReporter
 
                         if (sharedLogMessage.Attach != null)
                         {
-                            logItemRequest.Attach = new Client.Models.Attach(sharedLogMessage.Attach.Name, sharedLogMessage.Attach.MimeType, sharedLogMessage.Attach.Data);
+                            logItemRequest.Attach = new Client.Abstractions.Responses.Attach(sharedLogMessage.Attach.Name, sharedLogMessage.Attach.MimeType, sharedLogMessage.Attach.Data);
                         }
 
                         testReporter.Log(logItemRequest);
@@ -203,7 +203,7 @@ namespace ReportPortal.XUnitReporter
 
                     if (!isInternalSharedMessage)
                     {
-                        testReporter.Log(new AddLogItemRequest
+                        testReporter.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Info,
                             Time = DateTime.UtcNow,
