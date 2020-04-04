@@ -23,7 +23,7 @@ namespace ReportPortal.XUnitReporter
                     var testCollection = args.Message;
                     string key = testCollection.TestCollection.UniqueID.ToString();
 
-                    ITestReporter testReporter = Bridge.Context.LaunchReporter.StartChildTestReporter(
+                    ITestReporter testReporter = _launchReporter.StartChildTestReporter(
                         new StartTestItemRequest()
                         {
                             Name = testCollection.TestCollection.DisplayName,

@@ -4,6 +4,7 @@ using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared.Reporter;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,12 +21,12 @@ namespace ReportPortal.XUnitReporter
                     var testEvent = args.Message;
                     string key = testEvent.Test.TestCase.UniqueID.ToString();
 
-                    var tags = new List<string>();
+                    var attrbutes = new List<ItemAttribute>();
                     foreach (var trait in args.Message.Test.TestCase.Traits)
                     {
                         foreach (var value in trait.Value)
                         {
-                            tags.Add($"{trait.Key}: {value}");
+                            attrbutes.Add(new ItemAttribute { Key = trait.Key, Value = value });
                         }
                     }
 
@@ -35,7 +36,7 @@ namespace ReportPortal.XUnitReporter
                             Name = testEvent.Test.DisplayName,
                             StartTime = DateTime.UtcNow,
                             Type = TestItemType.Step,
-                            Tags = tags
+                            Attributes = attrbutes
                         });
 
                     TestReporterDictionary[key] = testReporter;

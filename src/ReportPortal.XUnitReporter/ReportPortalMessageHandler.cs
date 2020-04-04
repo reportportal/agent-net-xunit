@@ -8,6 +8,7 @@ using Xunit;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Configuration.Providers;
+using ReportPortal.Client.Abstractions;
 
 namespace ReportPortal.XUnitReporter
 {
@@ -16,6 +17,10 @@ namespace ReportPortal.XUnitReporter
         private IRunnerLogger Logger { get; set; }
 
         private IConfiguration _config;
+
+        private IClientService _service;
+
+        private ILaunchReporter _launchReporter;
 
         protected Dictionary<string, ITestReporter> TestReporterDictionary = new Dictionary<string, ITestReporter>();
 

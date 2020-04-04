@@ -31,12 +31,12 @@ namespace ReportPortal.XUnitReporter
                         Name = _config.GetValue(ConfigurationPath.LaunchName, "xUnit Demo Launch"),
                         StartTime = DateTime.UtcNow,
                         Mode = launchMode,
-                        Tags = _config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList(),
+                        Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value}).ToList(),
                         Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
                     };
 
-                    Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service, _config, null);
-                    Bridge.Context.LaunchReporter.Start(startLaunchRequest);
+                    _launchReporter = new LaunchReporter(_service, _config, null);
+                    _launchReporter.Start(startLaunchRequest);
                 }
                 catch (Exception exp)
                 {
@@ -51,13 +51,13 @@ namespace ReportPortal.XUnitReporter
             {
                 try
                 {
-                    Bridge.Context.LaunchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
+                    _launchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
 
                     Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
 
                     var stopWatch = Stopwatch.StartNew();
 
-                    Bridge.Context.LaunchReporter.FinishTask.Wait();
+                    _launchReporter.Sync();
 
                     Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
                 }
