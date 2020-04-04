@@ -34,7 +34,7 @@ namespace ReportPortal.XUnitReporter
 
             _config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
 
-            Bridge.Service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
+            _service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
 
             Execution.TestAssemblyStartingEvent += TestAssemblyExecutionStarting;
             Execution.TestAssemblyFinishedEvent += TestAssemblyExecutionFinished;
