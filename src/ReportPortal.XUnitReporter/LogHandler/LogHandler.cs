@@ -1,5 +1,6 @@
 ﻿using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Extensibility;
+using ReportPortal.Shared.Logging;
 using System;
 using Xunit.Abstractions;
 
@@ -24,7 +25,17 @@ namespace ReportPortal.XUnitReporter.LogHandler
 
         public int Order => 10;
 
-        public bool Handle(CreateLogItemRequest logRequest)
+        public void BeginScope(ILogScope logScope)
+        {
+            
+        }
+
+        public void EndScope(ILogScope logScope)
+        {
+            
+        }
+
+        public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
         {
             if (_outputHelper != null)
             {

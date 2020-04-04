@@ -1,5 +1,5 @@
-﻿using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Client.Abstractions.Responses;
+﻿using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Reporter;
 using System;
