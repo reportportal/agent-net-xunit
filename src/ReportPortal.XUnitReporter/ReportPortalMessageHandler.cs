@@ -1,14 +1,11 @@
 ﻿using ReportPortal.Client;
-using ReportPortal.Shared;
+using ReportPortal.Client.Abstractions;
+using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Reporter;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
-
-using ReportPortal.Shared.Reporter;
-using ReportPortal.Shared.Configuration;
-using ReportPortal.Shared.Configuration.Providers;
-using ReportPortal.Client.Abstractions;
 
 namespace ReportPortal.XUnitReporter
 {
@@ -24,15 +21,11 @@ namespace ReportPortal.XUnitReporter
 
         protected Dictionary<string, ITestReporter> TestReporterDictionary = new Dictionary<string, ITestReporter>();
 
-        public ReportPortalReporterMessageHandler(IRunnerLogger logger)
+        public ReportPortalReporterMessageHandler(IRunnerLogger logger, IConfiguration configuration)
         {
             Logger = logger;
 
-            var jsonPath = Path.GetDirectoryName(new Uri(typeof(ReportPortalReporter).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
-
-            Logger.LogMessage($"ReportPortal json config: {jsonPath}");
-
-            _config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
+            _config = configuration;
 
             _service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
 

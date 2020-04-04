@@ -1,5 +1,4 @@
 ﻿using ReportPortal.Shared.Configuration;
-using ReportPortal.Shared.Configuration.Providers;
 using System;
 using System.IO;
 using Xunit;
@@ -13,8 +12,9 @@ namespace ReportPortal.XUnitReporter
 
         public ReportPortalReporter()
         {
-            var jsonPath = Path.Combine(Path.GetDirectoryName(new Uri(typeof(ReportPortalReporter).Assembly.CodeBase).LocalPath), "ReportPortal.config.json");
-            _config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
+            var currentDirectory = Path.Combine(Path.GetDirectoryName(new Uri(typeof(ReportPortalReporter).Assembly.Location).LocalPath));
+
+            _config = new ConfigurationBuilder().AddDefaults(currentDirectory).Build();
         }
 
         public string Description => "Reporting tests results to Report Portal";
@@ -23,6 +23,6 @@ namespace ReportPortal.XUnitReporter
 
         public string RunnerSwitch => "reportportal";
 
-        public IMessageSink CreateMessageHandler(IRunnerLogger logger) => new ReportPortalReporterMessageHandler(logger);
+        public IMessageSink CreateMessageHandler(IRunnerLogger logger) => new ReportPortalReporterMessageHandler(logger, _config);
     }
 }
