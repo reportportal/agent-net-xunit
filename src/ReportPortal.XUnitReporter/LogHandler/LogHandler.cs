@@ -1,26 +1,26 @@
 ﻿using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Shared;
 using ReportPortal.Shared.Extensibility;
 using ReportPortal.Shared.Logging;
 using ReportPortal.XUnitReporter.LogHandler.Messages;
-using System;
+using System.Collections.Concurrent;
 using Xunit.Abstractions;
 
 namespace ReportPortal.XUnitReporter.LogHandler
 {
     public class LogHandler : ILogHandler
     {
-        [ThreadStatic]
-        private static ITestOutputHelper _outputHelper;
+        private static ConcurrentDictionary<ILogScope, ITestOutputHelper> _outputHelper = new ConcurrentDictionary<ILogScope, ITestOutputHelper>();
 
         public static ITestOutputHelper XunitTestOutputHelper
         {
             get
             {
-                return _outputHelper;
+                return _outputHelper[Log.RootScope];
             }
             set
             {
-                _outputHelper = value;
+                _outputHelper[Log.RootScope] = value;
             }
         }
 
@@ -38,7 +38,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     BeginTime = logScope.BeginTime
                 };
 
-                _outputHelper.WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
+                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
             }
         }
 
@@ -53,7 +53,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     Status = logScope.Status
                 };
 
-                _outputHelper.WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
             }
         }
 
@@ -74,7 +74,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     sharedLogMessage.Attach = new Attach(logRequest.Attach.Name, logRequest.Attach.MimeType, logRequest.Attach.Data);
                 }
 
-                _outputHelper.WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
+                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
 
                 return true;
             }
