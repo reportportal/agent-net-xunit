@@ -1,26 +1,43 @@
 ﻿using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Extensibility;
+using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Logging;
 using ReportPortal.XUnitReporter.LogHandler.Messages;
+using System;
 using System.Collections.Concurrent;
+using System.IO;
 using Xunit.Abstractions;
 
 namespace ReportPortal.XUnitReporter.LogHandler
 {
     public class LogHandler : ILogHandler
     {
-        private static ConcurrentDictionary<ILogScope, ITestOutputHelper> _outputHelper = new ConcurrentDictionary<ILogScope, ITestOutputHelper>();
+        private static readonly ITraceLogger TraceLogger;
+
+        private static ConcurrentDictionary<ILogScope, ITestOutputHelper> _outputHelperMap = new ConcurrentDictionary<ILogScope, ITestOutputHelper>();
+
+        static LogHandler()
+        {
+            var currentDirectory = Path.Combine(Path.GetDirectoryName(new Uri(typeof(ReportPortalReporter).Assembly.Location).LocalPath));
+
+            TraceLogger = TraceLogManager.Instance.WithBaseDir(currentDirectory).GetLogger<LogHandler>();
+
+        }
 
         public static ITestOutputHelper XunitTestOutputHelper
         {
             get
             {
-                return _outputHelper[Log.RootScope];
+                return _outputHelperMap[Log.RootScope];
             }
             set
             {
-                _outputHelper[Log.RootScope] = value;
+                var rootScope = Log.RootScope;
+
+                TraceLogger.Verbose($"Fixture is helping to assign ITestOutputHelper with current root scope {rootScope.GetHashCode()}...");
+
+                _outputHelperMap[rootScope] = value;
             }
         }
 
@@ -29,7 +46,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
         public void BeginScope(ILogScope logScope)
         {
 
-            if (_outputHelper.TryGetValue(Log.RootScope, out ITestOutputHelper output))
+            if (_outputHelperMap.TryGetValue(Log.RootScope, out ITestOutputHelper output))
             {
                 var communicationMessage = new BeginScopeCommunicationMessage
                 {
@@ -52,13 +69,16 @@ namespace ReportPortal.XUnitReporter.LogHandler
                 Status = logScope.Status
             };
 
-            _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+            _outputHelperMap[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
         }
 
         public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
         {
+            var rootScope = Log.RootScope;
 
-            if (_outputHelper.TryGetValue(Log.RootScope, out ITestOutputHelper output))
+            TraceLogger.Verbose($"Handling log message for {rootScope.GetHashCode()} root scope...");
+
+            if (_outputHelperMap.TryGetValue(rootScope, out ITestOutputHelper output))
             {
                 var sharedLogMessage = new AddLogCommunicationMessage
                 {
