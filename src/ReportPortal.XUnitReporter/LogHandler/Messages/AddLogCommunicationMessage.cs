@@ -2,16 +2,15 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ReportPortal.XUnitReporter
+namespace ReportPortal.XUnitReporter.LogHandler.Messages
 {
     [DataContract]
-    class SharedLogMessage
+    class AddLogCommunicationMessage : BaseCommunicationMessage
     {
-        /// <summary>
-        /// ID of test item to add new logs.
-        /// </summary>
+        public override CommunicationAction Action { get => CommunicationAction.AddLog; set => base.Action = value; }
+
         [DataMember]
-        public string TestItemUuid { get; set; }
+        public string ParentScopeId { get; set; }
 
         /// <summary>
         /// Date time of log item.
@@ -39,7 +38,7 @@ namespace ReportPortal.XUnitReporter
     }
 
     [DataContract]
-    public class Attach
+    class Attach
     {
         public Attach()
         {

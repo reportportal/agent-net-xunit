@@ -2,6 +2,7 @@
 using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared.Reporter;
+using ReportPortal.XUnitReporter.LogHandler.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -183,23 +184,25 @@ namespace ReportPortal.XUnitReporter
 
                     try
                     {
-                        var sharedLogMessage = Client.Converters.ModelSerializer.Deserialize<SharedLogMessage>(testEvent.Output);
+                        var communicationMessage = Client.Converters.ModelSerializer.Deserialize<BaseCommunicationMessage>(testEvent.Output);
 
-                        isInternalSharedMessage = true;
-
-                        var logItemRequest = new CreateLogItemRequest
+                        switch (communicationMessage.Action)
                         {
-                            Time = sharedLogMessage.Time,
-                            Level = sharedLogMessage.Level,
-                            Text = sharedLogMessage.Text
-                        };
-
-                        if (sharedLogMessage.Attach != null)
-                        {
-                            logItemRequest.Attach = new Client.Abstractions.Responses.Attach(sharedLogMessage.Attach.Name, sharedLogMessage.Attach.MimeType, sharedLogMessage.Attach.Data);
+                            case CommunicationAction.AddLog:
+                                var addLogCommunicationAction = Client.Converters.ModelSerializer.Deserialize<AddLogCommunicationMessage>(testEvent.Output);
+                                HandleAddLogCommunicationAction(testReporter, addLogCommunicationAction);
+                                break;
+                            case CommunicationAction.BeginLogScope:
+                                var beginScopeCommunicationAction = Client.Converters.ModelSerializer.Deserialize<BeginScopeCommunicationMessage>(testEvent.Output);
+                                HandleBeginScopeCommunicationAction(testReporter, beginScopeCommunicationAction);
+                                break;
+                            case CommunicationAction.EndLogScope:
+                                var endScopeCommunicationMessage = Client.Converters.ModelSerializer.Deserialize<EndScopeCommunicationMessage>(testEvent.Output);
+                                HandleEndScopeCommunicationMessage(endScopeCommunicationMessage);
+                                break;
                         }
 
-                        testReporter.Log(logItemRequest);
+                        isInternalSharedMessage = true;
                     }
                     catch (Exception) { }
 
@@ -218,6 +221,68 @@ namespace ReportPortal.XUnitReporter
                     Logger.LogError(exp.ToString());
                 }
             }
+        }
+
+        // key: scope id, value: according test reporter
+        private Dictionary<string, ITestReporter> _nestedScopes = new Dictionary<string, ITestReporter>();
+
+        private void HandleAddLogCommunicationAction(ITestReporter testReporter, AddLogCommunicationMessage logMessage)
+        {
+            var logRequest = new CreateLogItemRequest
+            {
+                Text = logMessage.Text,
+                Time = logMessage.Time,
+                Level = logMessage.Level
+            };
+
+            if (logMessage.Attach != null)
+            {
+                logRequest.Attach = new Client.Abstractions.Responses.Attach(logMessage.Attach.Name, logMessage.Attach.MimeType, logMessage.Attach.Data);
+            }
+
+            if (logMessage.ParentScopeId != null)
+            {
+                testReporter = _nestedScopes[logMessage.ParentScopeId];
+            }
+
+            testReporter.Log(logRequest);
+        }
+
+        private void HandleBeginScopeCommunicationAction(ITestReporter testReporter, BeginScopeCommunicationMessage logScopeMessage)
+        {
+            var startNestedStepRequest = new StartTestItemRequest
+            {
+                Name = logScopeMessage.Name,
+                StartTime = logScopeMessage.BeginTime,
+                Type = TestItemType.Step
+            };
+
+            if (logScopeMessage.ParentScopeId != null)
+            {
+                testReporter = _nestedScopes[logScopeMessage.ParentScopeId];
+            }
+
+            var nestedStep = testReporter.StartChildTestReporter(startNestedStepRequest);
+            _nestedScopes[logScopeMessage.Id] = nestedStep;
+        }
+
+        private Dictionary<Shared.Logging.LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<Shared.Logging.LogScopeStatus, Status> {
+            { Shared.Logging.LogScopeStatus.InProgress, Status.InProgress },
+            { Shared.Logging.LogScopeStatus.Passed, Status.Passed },
+            { Shared.Logging.LogScopeStatus.Failed, Status.Failed },
+            { Shared.Logging.LogScopeStatus.Skipped,Status.Skipped }
+        };
+
+        private void HandleEndScopeCommunicationMessage(EndScopeCommunicationMessage endScopeMessage)
+        {
+            var finishNestedStepRequest = new FinishTestItemRequest
+            {
+                EndTime = endScopeMessage.EndTime,
+                Status = _nestedStepStatusMap[endScopeMessage.Status]
+            };
+
+            _nestedScopes[endScopeMessage.Id].Finish(finishNestedStepRequest);
+            _nestedScopes.Remove(endScopeMessage.Id);
         }
     }
 }
