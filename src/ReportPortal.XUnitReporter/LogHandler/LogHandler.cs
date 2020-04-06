@@ -76,7 +76,6 @@ namespace ReportPortal.XUnitReporter.LogHandler
         {
             var rootScope = Log.RootScope;
 
-            TraceLogger.Verbose($"Sync context: {System.Threading.SynchronizationContext.Current.GetHashCode()})");
             TraceLogger.Verbose($"Handling log message for {rootScope.GetHashCode()} root scope...");
 
             if (_outputHelperMap.TryGetValue(rootScope, out ITestOutputHelper output))
