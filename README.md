@@ -32,7 +32,7 @@ Add `ReportPortal.config.json` file to the test project.
     "name": "XUnit Demo Launch",
     "description": "this is description",
     "debugMode": false,
-    "tags": [ "t1", "t2" ]
+    "attributes": [ "t1", "os:win10" ]
   }
 }
 ```
@@ -51,7 +51,7 @@ Download zip archive from the `Releases` tab and extract it into the folder with
 - xunit.console.exe
 - ReportPortal.XUnitReporter.dll
 
-> Note: Supports only xUnit v2.4. Awaiting [issue](https://github.com/xunit/xunit/issues/1874) with ability to use custom reporters.
+> Note: Supports only xUnit v2.4.1. Awaiting [issue](https://github.com/xunit/xunit/issues/1874) with ability to use custom reporters.
 
 To verify whether reporter is available, execute `xunit.console.exe` without parameters. `-reportportal` should be listed in Reporters section.
 
@@ -68,7 +68,7 @@ set reportportal_launch_name="My new launch name"
 # execute tests
 ```
 
-`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Tags` with `tag1;tag2` value (`;` used as separator for list of values).
+`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Attributes` with `tag1;tag2` value (`;` used as separator for list of values).
 
 # Integrate logger framework
 - [NLog](https://github.com/reportportal/logger-net-nlog)
@@ -97,23 +97,6 @@ class MyTests
     // or use log framework to produce messages
   }
 }
-```
-
-> Note: sometimes log messages might be lost if test actively is switching thread context. Currently it's impossible to track test context, please help us to do it.
-
-```csharp
-var tasks = new List<Task>();
-for (int i=0; i < 3; i++)
-{
-  tasks.Add(Task.Run(() => SomeMethod()));
-}
-Task.WaitAll(tasks.ToArray());
-```
-
-In this example we create 3 threads and execute `SomeMethod()` in parallel. The issue is if `SomeMethod` produces log messages - we will loose them. To help us not to lose context just attach ReportPortal one more time. New code looks like:
-
-```csharp
-tasks.Add(Task.Run(() => { _output.WithReportPortal(); SomeMethod(); } ));
 ```
 
 # Useful extensions
