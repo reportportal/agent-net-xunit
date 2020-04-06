@@ -254,7 +254,8 @@ namespace ReportPortal.XUnitReporter
             {
                 Name = logScopeMessage.Name,
                 StartTime = logScopeMessage.BeginTime,
-                Type = TestItemType.Step
+                Type = TestItemType.Step,
+                HasStats = false
             };
 
             if (logScopeMessage.ParentScopeId != null)
