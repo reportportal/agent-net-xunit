@@ -7,6 +7,8 @@ using ReportPortal.XUnitReporter.LogHandler.Messages;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Reflection;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace ReportPortal.XUnitReporter.LogHandler
@@ -45,7 +47,6 @@ namespace ReportPortal.XUnitReporter.LogHandler
 
         public void BeginScope(ILogScope logScope)
         {
-
             if (_outputHelperMap.TryGetValue(Log.RootScope, out ITestOutputHelper output))
             {
                 var communicationMessage = new BeginScopeCommunicationMessage
@@ -56,7 +57,8 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     BeginTime = logScope.BeginTime
                 };
 
-                output.WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
+                //output.WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
+                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
             }
         }
 
@@ -69,7 +71,10 @@ namespace ReportPortal.XUnitReporter.LogHandler
                 Status = logScope.Status
             };
 
-            _outputHelperMap[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+            var outputHelper = _outputHelperMap[Log.RootScope];
+
+            //outputHelper.WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+            NotifyAgent(outputHelper, Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
         }
 
         public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
@@ -93,10 +98,26 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     sharedLogMessage.Attach = new Attach(logRequest.Attach.Name, logRequest.Attach.MimeType, logRequest.Attach.Data);
                 }
 
-                output.WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
+                //output.WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
+                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
             }
 
             return true;
+        }
+
+        private void NotifyAgent(ITestOutputHelper outputHelper, string serializedMessage)
+        {
+            var type = outputHelper.GetType();
+            var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+            var test = testMember.GetValue(outputHelper);
+
+            var messageBusMember = type.GetField("messageBus", BindingFlags.Instance | BindingFlags.NonPublic);
+            var messageBusValue = messageBusMember.GetValue(outputHelper);
+
+            var messageBusType = messageBusValue.GetType();
+            var m = messageBusType.GetMethod("QueueMessage", BindingFlags.Instance | BindingFlags.Public);
+            TestOutput mmm = new TestOutput((ITest)test, serializedMessage);
+            m.Invoke(messageBusValue, new object[] { mmm });
         }
     }
 }
