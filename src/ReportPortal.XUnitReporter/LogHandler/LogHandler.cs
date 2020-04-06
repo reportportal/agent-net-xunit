@@ -28,7 +28,8 @@ namespace ReportPortal.XUnitReporter.LogHandler
 
         public void BeginScope(ILogScope logScope)
         {
-            if (_outputHelper != null)
+
+            if (_outputHelper.TryGetValue(Log.RootScope, out ITestOutputHelper output))
             {
                 var communicationMessage = new BeginScopeCommunicationMessage
                 {
@@ -38,28 +39,26 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     BeginTime = logScope.BeginTime
                 };
 
-                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
+                output.WriteLine(Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
             }
         }
 
         public void EndScope(ILogScope logScope)
         {
-            if (_outputHelper != null)
+            var communicationMessage = new EndScopeCommunicationMessage
             {
-                var communicationMessage = new EndScopeCommunicationMessage
-                {
-                    Id = logScope.Id,
-                    EndTime = logScope.EndTime.Value,
-                    Status = logScope.Status
-                };
+                Id = logScope.Id,
+                EndTime = logScope.EndTime.Value,
+                Status = logScope.Status
+            };
 
-                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
-            }
+            _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
         }
 
         public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
         {
-            if (_outputHelper != null)
+
+            if (_outputHelper.TryGetValue(Log.RootScope, out ITestOutputHelper output))
             {
                 var sharedLogMessage = new AddLogCommunicationMessage
                 {
@@ -74,12 +73,10 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     sharedLogMessage.Attach = new Attach(logRequest.Attach.Name, logRequest.Attach.MimeType, logRequest.Attach.Data);
                 }
 
-                _outputHelper[Log.RootScope].WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
-
-                return true;
+                output.WriteLine(Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
             }
 
-            return false;
+            return true;
         }
     }
 }
