@@ -31,11 +31,11 @@ namespace ReportPortal.XUnitReporter
                         Name = _config.GetValue(ConfigurationPath.LaunchName, "xUnit Demo Launch"),
                         StartTime = DateTime.UtcNow,
                         Mode = launchMode,
-                        Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value}).ToList(),
+                        Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList(),
                         Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
                     };
 
-                    _launchReporter = new LaunchReporter(_service, _config, null);
+                    _launchReporter = new LaunchReporter(_service, _config, null, Shared.Extensibility.ExtensionManager.Instance);
                     _launchReporter.Start(startLaunchRequest);
                 }
                 catch (Exception exp)

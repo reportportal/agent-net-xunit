@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="3.0.0-alpha.55">
+    <PackageReference Include="ReportPortal.Shared" Version="3.0.0-alpha.69">
       <PrivateAssets>contentfiles; analyzers;</PrivateAssets>
     </PackageReference>
     <PackageReference Include="xunit.runner.utility" Version="2.4.1">
