@@ -1,6 +1,5 @@
 ﻿using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Reporter;
 using System;
@@ -34,6 +33,8 @@ namespace ReportPortal.XUnitReporter
                         Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList(),
                         Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
                     };
+
+                    Shared.Extensibility.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-xunit");
 
                     _launchReporter = new LaunchReporter(_service, _config, null, Shared.Extensibility.ExtensionManager.Instance);
                     _launchReporter.Start(startLaunchRequest);
