@@ -100,4 +100,5 @@ class MyTests
 ```
 
 # Useful extensions
-- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback)
+- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback) adds piece of test code where it was failed
+- [Insider](https://github.com/nvborisenko/reportportal-extensions-insider) brings more reporting capabilities without coding
