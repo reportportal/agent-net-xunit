@@ -99,6 +99,9 @@ class MyTests
 }
 ```
 
+And [how](https://github.com/reportportal/commons-net/blob/master/docs/Logging.md) you can improve your logging experience with attachments or nested steps.
+
+
 # Useful extensions
-- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback) adds piece of test code where it was failed
-- [Insider](https://github.com/nvborisenko/reportportal-extensions-insider) brings more reporting capabilities without coding
+- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback) adds piece of test code where test was failed
+- [Insider](https://github.com/nvborisenko/reportportal-extensions-insider) brings more reporting capabilities without coding like methods invocation as nested steps
