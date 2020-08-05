@@ -237,7 +237,7 @@ namespace ReportPortal.XUnitReporter
 
             if (logMessage.Attach != null)
             {
-                logRequest.Attach = new Client.Abstractions.Responses.Attach(logMessage.Attach.Name, logMessage.Attach.MimeType, logMessage.Attach.Data);
+                logRequest.Attach = new LogItemAttach(logMessage.Attach.MimeType, logMessage.Attach.Data);
             }
 
             if (logMessage.ParentScopeId != null)
@@ -267,11 +267,11 @@ namespace ReportPortal.XUnitReporter
             _nestedScopes[logScopeMessage.Id] = nestedStep;
         }
 
-        private Dictionary<Shared.Logging.LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<Shared.Logging.LogScopeStatus, Status> {
-            { Shared.Logging.LogScopeStatus.InProgress, Status.InProgress },
-            { Shared.Logging.LogScopeStatus.Passed, Status.Passed },
-            { Shared.Logging.LogScopeStatus.Failed, Status.Failed },
-            { Shared.Logging.LogScopeStatus.Skipped,Status.Skipped }
+        private Dictionary<Shared.Execution.Logging.LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<Shared.Execution.Logging.LogScopeStatus, Status> {
+            { Shared.Execution.Logging.LogScopeStatus.InProgress, Status.InProgress },
+            { Shared.Execution.Logging.LogScopeStatus.Passed, Status.Passed },
+            { Shared.Execution.Logging.LogScopeStatus.Failed, Status.Failed },
+            { Shared.Execution.Logging.LogScopeStatus.Skipped,Status.Skipped }
         };
 
         private void HandleEndScopeCommunicationMessage(EndScopeCommunicationMessage endScopeMessage)
