@@ -237,7 +237,7 @@ namespace ReportPortal.XUnitReporter
 
             if (logMessage.Attach != null)
             {
-                logRequest.Attach = new Client.Abstractions.Responses.Attach(logMessage.Attach.MimeType, logMessage.Attach.Data);
+                logRequest.Attach = new LogItemAttach(logMessage.Attach.MimeType, logMessage.Attach.Data);
             }
 
             if (logMessage.ParentScopeId != null)
