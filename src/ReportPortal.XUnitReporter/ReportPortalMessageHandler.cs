@@ -4,15 +4,12 @@ using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Reporter;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Xunit;
 
 namespace ReportPortal.XUnitReporter
 {
-    public partial class ReportPortalReporterMessageHandler : TestMessageSink
+    public partial class ReportPortalReporterMessageHandler : DefaultRunnerReporterWithTypesMessageHandler
     {
-        private IRunnerLogger Logger { get; set; }
-
         private IConfiguration _config;
 
         private IClientService _service;
@@ -21,10 +18,8 @@ namespace ReportPortal.XUnitReporter
 
         protected Dictionary<string, ITestReporter> TestReporterDictionary = new Dictionary<string, ITestReporter>();
 
-        public ReportPortalReporterMessageHandler(IRunnerLogger logger, IConfiguration configuration)
+        public ReportPortalReporterMessageHandler(IRunnerLogger logger, IConfiguration configuration) : base(logger)
         {
-            Logger = logger;
-
             _config = configuration;
 
             _service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
