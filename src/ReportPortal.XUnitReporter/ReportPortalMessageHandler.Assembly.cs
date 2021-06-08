@@ -61,6 +61,7 @@ namespace ReportPortal.XUnitReporter
                     _launchReporter.Sync();
 
                     Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
+                    Logger.LogMessage(_launchReporter.StatisticsCounter.ToString());
                 }
                 catch (Exception exp)
                 {
