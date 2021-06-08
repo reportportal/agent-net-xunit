@@ -22,7 +22,7 @@ namespace ReportPortal.XUnitReporter
         {
             _config = configuration;
 
-            _service = new Service(new Uri(_config.GetValue<string>(ConfigurationPath.ServerUrl)), _config.GetValue<string>(ConfigurationPath.ServerProject), _config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid));
+            _service = new Shared.Reporter.Http.ClientServiceBuilder(configuration).Build();
 
             Execution.TestAssemblyStartingEvent += TestAssemblyExecutionStarting;
             Execution.TestAssemblyFinishedEvent += TestAssemblyExecutionFinished;
