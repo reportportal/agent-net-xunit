@@ -37,6 +37,8 @@ Add `ReportPortal.config.json` file to the test project.
 }
 ```
 
+Read [more](https://github.com/reportportal/commons-net/blob/master/docs/Configuration.md) about configuration of other available options and alternative ways how to provide options.
+
 ## Run tests
 Now if you execute tests via `dotnet test`, or `dotnet vstest`, or `vstest.console.exe`, you should see real-time report.
 
@@ -60,15 +62,6 @@ Configure connection with Report Portal server in `ReportPortal.config.json` fil
 
 ## Run tests
 Just execute your tests as you do it usually. Test results are automatically will be sent during execution.
-
-# Environment variables
-It's possible to override parameters via environment variables.
-```cmd
-set reportportal_launch_name="My new launch name"
-# execute tests
-```
-
-`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Attributes` with `tag1;tag2` value (`;` used as separator for list of values).
 
 # Integrate logger framework
 - [NLog](https://github.com/reportportal/logger-net-nlog)
