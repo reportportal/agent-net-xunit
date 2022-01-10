@@ -27,7 +27,7 @@ namespace ReportPortal.XUnitReporter
 
                     var startLaunchRequest = new StartLaunchRequest
                     {
-                        Name = _config.GetValue(ConfigurationPath.LaunchName, "xUnit Demo Launch"),
+                        Name = _config.GetValue(ConfigurationPath.LaunchName, args.Message.TestAssembly.Assembly.Name),
                         StartTime = DateTime.UtcNow,
                         Mode = launchMode,
                         Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList(),
