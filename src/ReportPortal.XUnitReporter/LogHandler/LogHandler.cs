@@ -82,16 +82,17 @@ namespace ReportPortal.XUnitReporter.LogHandler
         {
             var logScope = args.LogScope;
 
-            var communicationMessage = new EndScopeCommunicationMessage
+            if (_outputHelperMap.TryGetValue(Context.Current.Log.Root, out ITestOutputHelper output))
             {
-                Id = logScope.Id,
-                EndTime = logScope.EndTime.Value,
-                Status = logScope.Status
-            };
+                var communicationMessage = new EndScopeCommunicationMessage
+                {
+                    Id = logScope.Id,
+                    EndTime = logScope.EndTime.Value,
+                    Status = logScope.Status
+                };
 
-            var outputHelper = _outputHelperMap[Context.Current.Log.Root];
-
-            NotifyAgent(outputHelper, Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+            }
         }
 
         private void CommandsSource_OnBeginLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
