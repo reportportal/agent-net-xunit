@@ -76,7 +76,7 @@ class MyTests
 {
   private ITestOutputHelper _output;
 
-  void MyTests(ITestOutputHelper output)
+  public MyTests(ITestOutputHelper output)
   {
     _output = output.WithReportPortal();
   }
