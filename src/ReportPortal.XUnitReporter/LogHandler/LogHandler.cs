@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -74,7 +75,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     sharedLogMessage.Attach = new Attach(logRequest.Attach.MimeType, logRequest.Attach.Data);
                 }
 
-                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<AddLogCommunicationMessage>(sharedLogMessage));
+                NotifyAgent(output, JsonSerializer.Serialize(sharedLogMessage));
             }
         }
 
@@ -91,7 +92,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     Status = logScope.Status
                 };
 
-                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<EndScopeCommunicationMessage>(communicationMessage));
+                NotifyAgent(output, JsonSerializer.Serialize(communicationMessage));
             }
         }
 
@@ -109,7 +110,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                     BeginTime = logScope.BeginTime
                 };
 
-                NotifyAgent(output, Client.Converters.ModelSerializer.Serialize<BeginScopeCommunicationMessage>(communicationMessage));
+                NotifyAgent(output, JsonSerializer.Serialize(communicationMessage));
             }
         }
 

@@ -5,7 +5,7 @@ using ReportPortal.Shared.Reporter;
 using ReportPortal.XUnitReporter.LogHandler.Messages;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -184,20 +184,20 @@ namespace ReportPortal.XUnitReporter
 
                     try
                     {
-                        var communicationMessage = Client.Converters.ModelSerializer.Deserialize<BaseCommunicationMessage>(testEvent.Output);
+                        var communicationMessage = JsonSerializer.Deserialize<BaseCommunicationMessage>(testEvent.Output);
 
                         switch (communicationMessage.Action)
                         {
                             case CommunicationAction.AddLog:
-                                var addLogCommunicationAction = Client.Converters.ModelSerializer.Deserialize<AddLogCommunicationMessage>(testEvent.Output);
+                                var addLogCommunicationAction = JsonSerializer.Deserialize<AddLogCommunicationMessage>(testEvent.Output);
                                 HandleAddLogCommunicationAction(testReporter, addLogCommunicationAction);
                                 break;
                             case CommunicationAction.BeginLogScope:
-                                var beginScopeCommunicationAction = Client.Converters.ModelSerializer.Deserialize<BeginScopeCommunicationMessage>(testEvent.Output);
+                                var beginScopeCommunicationAction = JsonSerializer.Deserialize<BeginScopeCommunicationMessage>(testEvent.Output);
                                 HandleBeginScopeCommunicationAction(testReporter, beginScopeCommunicationAction);
                                 break;
                             case CommunicationAction.EndLogScope:
-                                var endScopeCommunicationMessage = Client.Converters.ModelSerializer.Deserialize<EndScopeCommunicationMessage>(testEvent.Output);
+                                var endScopeCommunicationMessage = JsonSerializer.Deserialize<EndScopeCommunicationMessage>(testEvent.Output);
                                 HandleEndScopeCommunicationMessage(endScopeCommunicationMessage);
                                 break;
                         }

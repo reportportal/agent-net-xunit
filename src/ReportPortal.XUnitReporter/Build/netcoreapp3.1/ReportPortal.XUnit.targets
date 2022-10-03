@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+
+    <_ReportPortal_XUnit_Runtime_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnitReporter.dll</_ReportPortal_XUnit_Runtime_Path>
+    <_ReportPortal_XUnit_Runtime_Pdb_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnitReporter.pdb</_ReportPortal_XUnit_Runtime_Pdb_Path>
+
+  </PropertyGroup>
+
+</Project>
