@@ -96,6 +96,7 @@ And [how](https://github.com/reportportal/commons-net/blob/master/docs/Logging.m
 
 
 # Useful extensions
+- [Skippable](https://github.com/nvborisenko/reportportal-extensions-skippable) marks skipped tests as `No Defect` automatically
 - [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback) adds piece of test code where test was failed
 - [Insider](https://github.com/nvborisenko/reportportal-extensions-insider) brings more reporting capabilities without coding like methods invocation as nested steps
 
