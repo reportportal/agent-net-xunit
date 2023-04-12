@@ -1,6 +1,5 @@
 ﻿using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Shared;
 using ReportPortal.Shared.Reporter;
 using System;
 using Xunit;
@@ -16,27 +15,24 @@ namespace ReportPortal.XUnitReporter
         /// <param name="args"></param>
         protected virtual void HandleTestCollectionStarting(MessageHandlerArgs<ITestCollectionStarting> args)
         {
-            lock (Logger.LockObject)
+            try
             {
-                try
-                {
-                    var testCollection = args.Message;
-                    string key = testCollection.TestCollection.UniqueID.ToString();
+                var testCollection = args.Message;
+                string key = testCollection.TestCollection.UniqueID.ToString();
 
-                    ITestReporter testReporter = _launchReporter.StartChildTestReporter(
-                        new StartTestItemRequest()
-                        {
-                            Name = testCollection.TestCollection.DisplayName,
-                            StartTime = DateTime.UtcNow,
-                            Type = TestItemType.Suite
-                        });
+                ITestReporter testReporter = _launchReporter.StartChildTestReporter(
+                    new StartTestItemRequest()
+                    {
+                        Name = testCollection.TestCollection.DisplayName,
+                        StartTime = DateTime.UtcNow,
+                        Type = TestItemType.Suite
+                    });
 
-                    TestReporterDictionary[key] = testReporter;
-                }
-                catch (Exception exp)
-                {
-                    Logger.LogError(exp.ToString());
-                }
+                TestReporterDictionary[key] = testReporter;
+            }
+            catch (Exception exp)
+            {
+                Logger.LogError(exp.ToString());
             }
         }
 
@@ -46,23 +42,20 @@ namespace ReportPortal.XUnitReporter
         /// <param name="args"></param>
         protected virtual void HandleTestCollectionFinished(MessageHandlerArgs<ITestCollectionFinished> args)
         {
-            lock (Logger.LockObject)
+            try
             {
-                try
-                {
-                    var testCollection = args.Message;
-                    string key = testCollection.TestCollection.UniqueID.ToString();
+                var testCollection = args.Message;
+                string key = testCollection.TestCollection.UniqueID.ToString();
 
-                    TestReporterDictionary[key].Finish(new FinishTestItemRequest()
-                    {
-                        EndTime = DateTime.UtcNow,
-                        Status = testCollection.TestsFailed > 0 ? Status.Failed : Status.Passed
-                    });
-                }
-                catch (Exception exp)
+                TestReporterDictionary[key].Finish(new FinishTestItemRequest()
                 {
-                    Logger.LogError(exp.ToString());
-                }
+                    EndTime = DateTime.UtcNow,
+                    Status = testCollection.TestsFailed > 0 ? Status.Failed : Status.Passed
+                });
+            }
+            catch (Exception exp)
+            {
+                Logger.LogError(exp.ToString());
             }
         }
     }
