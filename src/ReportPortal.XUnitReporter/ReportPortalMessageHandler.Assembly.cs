@@ -19,54 +19,48 @@ namespace ReportPortal.XUnitReporter
         /// <param name="args"></param>
         protected virtual void TestAssemblyExecutionStarting(MessageHandlerArgs<ITestAssemblyStarting> args)
         {
-            lock (Logger.LockObject)
+            try
             {
-                try
+                LaunchMode launchMode = _config.GetValue(ConfigurationPath.LaunchDebugMode, false) ? LaunchMode.Debug : LaunchMode.Default;
+
+                var startLaunchRequest = new StartLaunchRequest
                 {
-                    LaunchMode launchMode = _config.GetValue(ConfigurationPath.LaunchDebugMode, false) ? LaunchMode.Debug : LaunchMode.Default;
+                    Name = _config.GetValue(ConfigurationPath.LaunchName, GetAssemblyDisplayName(args.Message)),
+                    StartTime = DateTime.UtcNow,
+                    Mode = launchMode,
+                    Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList(),
+                    Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
+                };
 
-                    var startLaunchRequest = new StartLaunchRequest
-                    {
-                        Name = _config.GetValue(ConfigurationPath.LaunchName, args.Message.TestAssembly.Assembly.Name),
-                        StartTime = DateTime.UtcNow,
-                        Mode = launchMode,
-                        Attributes = _config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList(),
-                        Description = _config.GetValue(ConfigurationPath.LaunchDescription, "")
-                    };
+                Shared.Extensibility.Embedded.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-xunit");
 
-                    Shared.Extensibility.Embedded.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-xunit");
-
-                    _launchReporter = new LaunchReporter(_service, _config, null, Shared.Extensibility.ExtensionManager.Instance);
-                    _launchReporter.Start(startLaunchRequest);
-                }
-                catch (Exception exp)
-                {
-                    Logger.LogError(exp.ToString());
-                }
+                _launchReporter = new LaunchReporter(_service, _config, null, Shared.Extensibility.ExtensionManager.Instance);
+                _launchReporter.Start(startLaunchRequest);
+            }
+            catch (Exception exp)
+            {
+                Logger.LogError(exp.ToString());
             }
         }
 
         protected virtual void TestAssemblyExecutionFinished(MessageHandlerArgs<ITestAssemblyFinished> args)
         {
-            lock (Logger.LockObject)
+            try
             {
-                try
-                {
-                    _launchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
+                _launchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
 
-                    Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
+                Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
 
-                    var stopWatch = Stopwatch.StartNew();
+                var stopWatch = Stopwatch.StartNew();
 
-                    _launchReporter.Sync();
+                _launchReporter.Sync();
 
-                    Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
-                    Logger.LogMessage(_launchReporter.StatisticsCounter.ToString());
-                }
-                catch (Exception exp)
-                {
-                    Logger.LogError(exp.ToString());
-                }
+                Logger.LogMessage($"Results are sent to Report Portal server. Sync duration: {stopWatch.Elapsed}");
+                Logger.LogMessage(_launchReporter.StatisticsCounter.ToString());
+            }
+            catch (Exception exp)
+            {
+                Logger.LogError(exp.ToString());
             }
         }
     }

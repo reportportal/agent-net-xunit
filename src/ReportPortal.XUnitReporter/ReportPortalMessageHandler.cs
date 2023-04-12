@@ -1,22 +1,20 @@
-﻿using ReportPortal.Client;
-using ReportPortal.Client.Abstractions;
+﻿using ReportPortal.Client.Abstractions;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Reporter;
-using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Xunit;
 
 namespace ReportPortal.XUnitReporter
 {
     public partial class ReportPortalReporterMessageHandler : DefaultRunnerReporterWithTypesMessageHandler
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
 
-        private IClientService _service;
+        private readonly IClientService _service;
 
         private ILaunchReporter _launchReporter;
 
-        protected Dictionary<string, ITestReporter> TestReporterDictionary = new Dictionary<string, ITestReporter>();
+        protected ConcurrentDictionary<string, ITestReporter> TestReporterDictionary = new ConcurrentDictionary<string, ITestReporter>();
 
         public ReportPortalReporterMessageHandler(IRunnerLogger logger, IConfiguration configuration) : base(logger)
         {
