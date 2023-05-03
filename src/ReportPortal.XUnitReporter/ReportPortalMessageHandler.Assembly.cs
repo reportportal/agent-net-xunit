@@ -54,10 +54,6 @@ namespace ReportPortal.XUnitReporter
 
                 var stopWatch = Stopwatch.StartNew();
 
-                _launchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
-
-                Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
-
                 //log a message saying "we're still doing stuff", to avoid the appearance of hung builds 
                 using (new Timer(
                            _ => Logger.LogMessage($"Still sending results to Report Portal server..."),
