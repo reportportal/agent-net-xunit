@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -52,6 +53,10 @@ namespace ReportPortal.XUnitReporter
                 Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
 
                 var stopWatch = Stopwatch.StartNew();
+
+                _launchReporter.Finish(new FinishLaunchRequest { EndTime = DateTime.UtcNow });
+
+                Logger.LogMessage("Waiting to finish sending results to Report Portal server...");
 
                 //log a message saying "we're still doing stuff", to avoid the appearance of hung builds 
                 using (new Timer(
