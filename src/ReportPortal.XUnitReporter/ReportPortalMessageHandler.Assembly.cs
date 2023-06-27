@@ -69,7 +69,7 @@ namespace ReportPortal.XUnitReporter
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp.ToString());
+                Logger.LogWarning(exp.ToString());
             }
         }
     }
