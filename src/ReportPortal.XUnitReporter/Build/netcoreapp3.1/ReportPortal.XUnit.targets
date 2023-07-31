@@ -3,8 +3,8 @@
 
   <PropertyGroup>
 
-    <_ReportPortal_XUnit_Runtime_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnitReporter.dll</_ReportPortal_XUnit_Runtime_Path>
-    <_ReportPortal_XUnit_Runtime_Pdb_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnitReporter.pdb</_ReportPortal_XUnit_Runtime_Pdb_Path>
+    <_ReportPortal_XUnit_Runtime_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnit.reporters.dll</_ReportPortal_XUnit_Runtime_Path>
+    <_ReportPortal_XUnit_Runtime_Pdb_Path>$(MSBuildThisFileDirectory)..\..\lib\netcoreapp3.1\ReportPortal.XUnit.reporters.pdb</_ReportPortal_XUnit_Runtime_Pdb_Path>
 
   </PropertyGroup>
 

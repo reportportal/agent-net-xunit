@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net462;netcoreapp3.1;</TargetFrameworks>
+    <AssemblyName>ReportPortal.XUnit.reporters</AssemblyName>
     <PackageId>ReportPortal.XUnit</PackageId>
     <Description>XUnit results reporter to https://reportportal.io</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
