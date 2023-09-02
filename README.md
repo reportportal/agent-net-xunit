@@ -15,7 +15,7 @@ Install `ReportPortal.XUnit` nuget package in project with xunit tests.
 [![NuGet Badge](https://buildstats.info/nuget/reportportal.xunit)](https://www.nuget.org/packages/reportportal.xunit)
 
 ## Configuration
-Add `ReportPortal.config.json` file to the test project.
+Add `ReportPortal.json` file to the test project.
 
 ```json
 {
@@ -24,9 +24,7 @@ Add `ReportPortal.config.json` file to the test project.
   "server": {
     "url": "https://rp.epam.com/api/v1/",
     "project": "default_project",
-    "authentication": {
-      "uuid": "aa19555c-c9ce-42eb-bb11-87757225d535"
-    }
+    "apiKey": "aa19555c-c9ce-42eb-bb11-87757225d535"
   },
   "launch": {
     "name": "XUnit Demo Launch",
