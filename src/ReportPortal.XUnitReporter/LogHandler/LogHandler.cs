@@ -65,7 +65,7 @@ namespace ReportPortal.XUnitReporter.LogHandler
                 var sharedLogMessage = new AddLogCommunicationMessage
                 {
                     ParentScopeId = logScope?.Id,
-                    Level = logRequest.Level,
+                    Level = logRequest.LevelText,
                     Time = logRequest.Time,
                     Text = logRequest.Text
                 };
