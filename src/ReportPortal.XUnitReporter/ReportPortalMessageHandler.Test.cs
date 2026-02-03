@@ -217,7 +217,7 @@ namespace ReportPortal.XUnitReporter
             {
                 Text = logMessage.Text,
                 Time = logMessage.Time,
-                Level = logMessage.Level
+                LevelString = logMessage.Level
             };
 
             if (logMessage.Attach != null)
